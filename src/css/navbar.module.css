@@ -1,0 +1,28 @@
+.nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  transition: 0.5s all ease;
+}
+.nav .list {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
+  align-items: center;
+}
+.nav .list li {
+  margin: 1rem;
+}
+
+.light {
+  background-color: #606c5d;
+}
+.light .text {
+  color: #ffffff;
+}
+
+.dark {
+  background-color: #f9af2c;
+}/*# sourceMappingURL=navbar.module.css.map */

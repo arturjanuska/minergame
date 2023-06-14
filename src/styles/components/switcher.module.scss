@@ -1,0 +1,51 @@
+@use '../abstracts/colors' as *;
+@use '../abstracts/transitions' as *;
+
+.switcher {
+	width: 50px;
+	height: 24px;
+	border-radius: 50px;
+	position: relative;
+	box-shadow: inset 0px 0px 7px 5px #d1d1d18c;
+	transition: $trans_05;
+
+	cursor: pointer;
+
+	.circle {
+		background: rgb(168, 168, 168);
+		width: 18px;
+		height: 18px;
+
+		border-radius: 100%;
+		box-shadow: inset 0px 0px 7px 5px #e7e7e7;
+		position: absolute;
+		top: 3px;
+		left: 3px;
+
+		transition: 0.5s all ease;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+.right {
+	transform: translateX(25px);
+}
+
+.light {
+	background-color: $light_theme_bg;
+
+	.text {
+		color: $light_theme_text;
+	}
+}
+
+.dark {
+	background-color: $dark_theme_bg;
+
+	.text {
+		color: $dark_theme_text;
+	}
+}

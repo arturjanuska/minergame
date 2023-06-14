@@ -1,0 +1,42 @@
+$dark_theme_bg: #13141d;
+$dark_theme_text: #f0f0f0;
+
+$light_theme_bg: #f7e6c4;
+$light_theme_text: #202023;
+
+$light_primary: #606c5d;
+$dark_primary: #f9af2c;
+$dark_primary_600: #f8a20d;
+
+$success_bet_bg: #112623;
+$unsuccess_bet_bg: #391628;
+
+$gradient_black_brown: linear-gradient(
+	0deg,
+	rgba(116, 74, 25, 1) 5%,
+	rgba(25, 25, 29, 1) 65%
+);
+
+$gradient_black_purple: linear-gradient(
+	0deg,
+	rgba(69, 33, 50, 1) 15%,
+	rgba(24, 21, 30, 1) 70%
+);
+
+$gradient_clickable_box: linear-gradient(
+	0deg,
+	rgba(248, 176, 37, 1) 61%,
+	rgba(248, 139, 37, 1) 92%
+);
+$gradient_clickable_box_on_click: linear-gradient(
+	180deg,
+	rgba(248, 176, 37, 1) 61%,
+	rgba(248, 139, 37, 1) 92%
+);
+
+$square_border: #3c404a;
+$square_background_gradient: linear-gradient(
+	0deg,
+	rgba(46, 50, 62, 1) 30%,
+	rgba(28, 30, 38, 1) 85%
+);

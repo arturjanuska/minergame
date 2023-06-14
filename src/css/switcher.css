@@ -1,0 +1,32 @@
+.switcher {
+  width: 70px;
+  height: 30px;
+  border-radius: 50px;
+  position: relative;
+  box-shadow: inset 0px 0px 7px 5px rgba(209, 209, 209, 0.5490196078);
+}
+.switcher .circle {
+  background: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+  box-shadow: inset 0px 0px 7px 5px #bdbdbd;
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  transition: 0.5s all ease;
+}
+
+.light .background {
+  background-color: #fefefe;
+}
+.light .text {
+  color: #202023;
+}
+
+.dark .background {
+  background-color: #202023;
+}
+.dark .text {
+  color: #ffffff;
+}/*# sourceMappingURL=switcher.css.map */

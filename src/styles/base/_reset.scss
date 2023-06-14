@@ -1,0 +1,28 @@
+@use '../abstracts/colors' as *;
+@use '../abstracts/transitions' as *;
+
+body {
+	padding: 0;
+	margin: 0;
+}
+
+.light {
+	.text {
+		color: $light_theme_text;
+	}
+	.background {
+		background-color: $light_theme_bg;
+	}
+}
+.dark {
+	.text {
+		color: $dark_theme_text;
+	}
+	.background {
+		background-color: $dark_theme_bg;
+	}
+}
+
+.transition {
+	transition: $trans_05;
+}
