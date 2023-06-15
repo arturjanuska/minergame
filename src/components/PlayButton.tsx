@@ -13,10 +13,38 @@ type ButtonTheme = {
 	text: string;
 	background: string;
 };
-function PlayButton({ gameStatus }: Props) {
-	const { state, handleBarStatus, startGame, takeMoney } = useContext(Context);
 
-	const { gameSettings } = state;
+type CellProps = {
+	index: number;
+	bomb: boolean;
+	checked: boolean;
+};
+
+function PlayButton({ gameStatus }: Props) {
+	const { state, startGame, takeMoney, setStatus, updateCells } =
+		useContext(Context);
+
+	const { gameSettings, activeGame, gameCells } = state;
+
+	const flipAllCells = () => {
+		const allCells = gameCells.map((cell: CellProps) => {
+			return {
+				...cell,
+				checked: true,
+			};
+		});
+		updateCells(allCells);
+	};
+
+	const flipBackAllCells = () => {
+		const allCells = gameCells.map((cell: CellProps) => {
+			return {
+				...cell,
+				checked: false,
+			};
+		});
+		updateCells(allCells);
+	};
 
 	const handleButtonTheme = (status: string): ButtonTheme => {
 		if (status === 'initial') {
@@ -28,7 +56,7 @@ function PlayButton({ gameStatus }: Props) {
 		if (status === 'active') {
 			if (gameStatus.cellsOpened === 0) {
 				return {
-					text: 'Choose Cell',
+					text: 'CHOOSE CELL',
 					background: 'grey',
 				};
 			} else {
@@ -44,38 +72,47 @@ function PlayButton({ gameStatus }: Props) {
 			}
 		}
 		if (status === 'lose') {
-			handleBarStatus('lose');
 			return {
-				text: 'START',
+				text: 'PLAY AGAIN',
 				background: 'Orange',
 			};
 		}
 		if (status === 'win') {
-			handleBarStatus('win');
 			return {
-				text: 'START',
+				text: 'PLAY AGAIN',
 				background: 'Orange',
 			};
 		}
 		throw new Error(`Invalid status: ${status}`);
 	};
 
-	const handleButtonOnClick = (status: string): void => {
-		console.log(status);
-
-		if (status === 'initial') startGame(gameSettings.bombs);
-		if (status === 'active')
-			takeMoney(
-				gameSettings.coefficients[gameStatus.cellsOpened - 1].coefficient,
-				gameSettings.bid
-			);
-		if (status === 'lose') startGame(gameSettings.bombs);
-		if (status === 'win') startGame(gameSettings.bombs);
-	};
-
 	return (
 		<button
-			onClick={() => handleButtonOnClick(gameStatus.status)}
+			onClick={() => {
+				if (activeGame.status === 'initial') {
+					// console.log('clicked play');
+					startGame(gameSettings.bombs);
+					setStatus('active');
+				}
+				if (activeGame.status === 'active') {
+					if (activeGame.cellsOpened === 0) return;
+					// console.log('clicked Take money');
+					takeMoney(
+						gameSettings.coefficients[gameStatus.cellsOpened - 1].coefficient,
+						gameSettings.bid
+					);
+
+					setStatus('win');
+					flipAllCells();
+				}
+				if (activeGame.status === 'win' || activeGame.status === 'lose') {
+					// console.log('clicked PLAY AGAIN');
+					flipBackAllCells();
+					setTimeout(() => {
+						setStatus('initial');
+					}, 1000);
+				}
+			}}
 			style={{
 				background: handleButtonTheme(gameStatus.status).background,
 			}}

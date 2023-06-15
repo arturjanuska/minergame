@@ -13,27 +13,26 @@ type CellProps = {
 };
 
 function Game() {
-	const { state, updateCells, checkCells } = useContext(Context);
+	const { state, updateCells, setStatus, setOpenedCellsCount } =
+		useContext(Context);
 
-	const { gameSettings, gameCells, status } = state;
+	const { gameSettings, gameCells } = state;
 
 	const cells = Array.from({ length: 25 });
 
-	useEffect(() => {
-		if (status === 'lose' || status === 'win') {
-			setTimeout(() => {
-				const allFlipedCells = gameCells.map((cell: CellProps) => {
-					return {
-						...cell,
-						checked: true,
-					};
-				});
-				updateCells(allFlipedCells);
-			}, 500);
+	const checkCells = (cells: CellProps[]): boolean => {
+		const isBomb = cells.some(
+			(cell) => cell.checked === true && cell.bomb === true
+		);
+		if (isBomb) {
+			return true;
+		} else {
+			return false;
 		}
-	}, [gameCells]);
+	};
 
 	const flipCell = (index: number) => {
+		// console.log('Clicked cell index ==> ', index);
 		const updatedCells = gameCells.map((cell: CellProps) => {
 			if (cell.index === index) {
 				return {
@@ -43,8 +42,27 @@ function Game() {
 			}
 			return cell;
 		});
-		checkCells(updatedCells);
-		updateCells(updatedCells);
+		const isBomb = checkCells(updatedCells);
+		// console.log('Bomb? ==> ', isBomb);
+		const openedCellsCount = updatedCells.filter(
+			(cell: CellProps) => cell.checked
+		);
+		if (isBomb) {
+			setTimeout(() => {
+				const allFlipedCells = gameCells.map((cell: CellProps) => {
+					return {
+						...cell,
+						checked: true,
+					};
+				});
+				updateCells(allFlipedCells);
+				setStatus('lose');
+			}, 500);
+		} else {
+			setOpenedCellsCount(openedCellsCount.length);
+			updateCells(updatedCells);
+			setStatus('active');
+		}
 	};
 
 	return (

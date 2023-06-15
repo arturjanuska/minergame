@@ -30,39 +30,36 @@ const mainReducer = (state, action) => {
 			return {
 				...state,
 				gameCells: action.payload,
-				activeGame: { cellsOpened: 0, status: 'active' },
+				activeGame: { ...state.activeGame, cellsOpened: 0 },
+				cashPrize: 0,
+				beforeEndOpenedCells: 0,
+			};
+		case 'set_status':
+			return {
+				...state,
+				activeGame: { ...state.activeGame, status: action.payload },
 			};
 		case 'update_cells':
 			return {
 				...state,
 				gameCells: action.payload.cellsArr,
 				activeGame: {
-					status: action.payload.status,
-					cellsOpened: action.payload.openedCells,
+					...state.activeGame,
+					cellsOpened: action.payload.cellsOpened,
 				},
 			};
-		case 'lose':
+		case 'set_prize':
 			return {
 				...state,
-				activeGame: {
-					...state.activeGame,
-					status: 'lose',
-				},
-				status: 'lose',
+				cashPrize: action.payload,
+			};
+		case 'set_cells_count':
+			return {
+				...state,
+				beforeEndOpenedCells: action.payload,
 			};
 		default:
 			return state;
-	}
-};
-
-const checkCells = (dispatch) => (cells) => {
-	const isBomb = cells.some(
-		(cell) => cell.checked === true && cell.bomb === true
-	);
-	if (isBomb) {
-		dispatch({
-			type: 'lose',
-		});
 	}
 };
 
@@ -135,6 +132,33 @@ const handleBombs = (dispatch) => (bombs) => {
 	});
 };
 
+const setStatus = (dispatch) => (status) => {
+	if (status === 'lose') {
+		return dispatch({
+			type: 'set_status',
+			payload: 'lose',
+		});
+	}
+	if (status === 'active') {
+		return dispatch({
+			type: 'set_status',
+			payload: 'active',
+		});
+	}
+	if (status === 'win') {
+		return dispatch({
+			type: 'set_status',
+			payload: 'win',
+		});
+	}
+	if (status === 'initial') {
+		return dispatch({
+			type: 'set_status',
+			payload: 'initial',
+		});
+	}
+};
+
 const startGame = (dispatch) => (bombsSelected) => {
 	const generatedGame = generateCells(bombsSelected);
 	dispatch({
@@ -144,46 +168,31 @@ const startGame = (dispatch) => (bombsSelected) => {
 };
 
 const updateCells = (dispatch) => (cellsArr) => {
+	console.log('cellsArr ===', cellsArr);
 	const openedCells = cellsArr.filter((cell) => cell.checked === true);
 	const openedCellsLength = openedCells.length;
 
 	dispatch({
 		type: 'update_cells',
 		payload: {
-			status: 'initial',
 			cellsArr: cellsArr,
-			openedCells: openedCellsLength > 24 ? 0 : openedCellsLength,
+			cellsOpened: openedCellsLength > 24 ? 0 : openedCellsLength,
 		},
-	});
-};
-
-const resetGame = (dispatch) => (bombsSelected) => {
-	// TODO
-	const cells = generateCells(bombsSelected);
-	dispatch({
-		type: 'reset',
-		payload: {
-			gameCells: cells,
-		},
-	});
-};
-
-const handleBarStatus = (dispatch) => (status) => {
-	dispatch({
-		type: 'change_status',
-		payload: status === 'lose' ? 'lose' : 'win',
 	});
 };
 
 const takeMoney = (dispatch) => (coeff, bid) => {
-	const sum = bid * coeff;
-
+	const sum = (bid * coeff).toFixed(2);
 	dispatch({
-		type: 'win',
-		payload: {
-			sum,
-			status: 'win',
-		},
+		type: 'set_prize',
+		payload: sum,
+	});
+};
+
+const setOpenedCellsCount = (dispatch) => (count) => {
+	dispatch({
+		type: 'set_cells_count',
+		payload: count,
 	});
 };
 
@@ -198,10 +207,9 @@ export const { Provider, Context } = createDataContext(
 		handleBombs,
 		startGame,
 		updateCells,
-		checkCells,
-		resetGame,
-		handleBarStatus,
+		setStatus,
 		takeMoney,
+		setOpenedCellsCount,
 	},
 	// InitialStates
 	{
@@ -216,6 +224,7 @@ export const { Provider, Context } = createDataContext(
 			status: 'initial',
 			cellsOpened: 0,
 		},
-		status: '',
+		cashPrize: 0,
+		beforeEndOpenedCells: 0,
 	}
 );

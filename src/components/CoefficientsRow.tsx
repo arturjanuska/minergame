@@ -11,7 +11,7 @@ type CoefficientsProps = {
 export default function CoefficientsRow() {
 	const { state } = useContext(Context);
 
-	const { gameSettings } = state;
+	const { gameSettings, activeGame, cashPrize, beforeEndOpenedCells } = state;
 
 	const scrollContainerRef = useRef(null);
 
@@ -45,19 +45,52 @@ export default function CoefficientsRow() {
 				<MdKeyboardArrowLeft size={40} />
 			</div>
 			<div
-				className={styles.hit__coefficient__row}
+				className={`${styles.hit__coefficient__row} ${
+					activeGame.status === 'win' ? styles.win : ''
+				} ${activeGame.status === 'lose' ? styles.lose : ''}`}
 				ref={scrollContainerRef}
 			>
-				{gameSettings.coefficients.map(
-					(coefficient: CoefficientsProps, idx: number) => (
-						<div
-							className={styles.coefficent__box}
-							key={idx}
-						>
-							<p className={styles.hit}>{idx + 1} Hit</p>
-							<p className={styles.coeff}>{coefficient.coefficient} x</p>
-						</div>
+				{activeGame.status === 'initial' || activeGame.status === 'active' ? (
+					gameSettings.coefficients.map(
+						(coefficient: CoefficientsProps, idx: number) => (
+							<div
+								className={`${styles.coefficent__box} ${
+									idx === activeGame.cellsOpened - 1 &&
+									activeGame.status === 'active'
+										? styles.hitted_box
+										: ''
+								} ${
+									idx <= activeGame.cellsOpened - 1 &&
+									activeGame.status === 'active'
+										? styles.prev_box
+										: ''
+								}`}
+								key={idx}
+							>
+								<p className={styles.hit}>{idx + 1} Hit</p>
+								<p className={styles.coeff}>{coefficient.coefficient} x</p>
+							</div>
+						)
 					)
+				) : activeGame.status === 'win' ? (
+					<div className={styles.win_row}>
+						<p className={styles.coeff}>
+							{gameSettings.coefficients[beforeEndOpenedCells - 1].coefficient}{' '}
+							x
+						</p>
+						<p className={styles.cash_prize}>+ {cashPrize} €</p>
+						<p className={styles.win_status}>WIN</p>
+					</div>
+				) : activeGame.status === 'lose' ? (
+					<div className={styles.lose_row}>
+						<p className={styles.coeff}>
+							{gameSettings.coefficients[beforeEndOpenedCells].coefficient} x
+						</p>
+						<p className={styles.bomb}>BOMB</p>
+						<p className={styles.lose_hits}>{beforeEndOpenedCells + 1} HIT</p>
+					</div>
+				) : (
+					''
 				)}
 			</div>
 			<div

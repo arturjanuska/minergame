@@ -12,7 +12,14 @@ function Cell({ cellIdx, bomb, checked, flip }: CellProps) {
 		<div className={styles.cell__container}>
 			<div
 				className={`${styles.cell} ${checked ? styles.flip : ''}`}
-				onClick={() => flip(cellIdx)}
+				onClick={() => {
+					if (!checked) {
+						// console.log('Is this cell checked?', checked);
+						flip(cellIdx);
+					} else {
+						return;
+					}
+				}}
 			>
 				<div className={styles.front}></div>
 				<div

@@ -1,4 +1,8 @@
-export const coefficient22 = [
+type CoeffProps = {
+	coefficient: number
+}
+
+export const coefficient22: CoeffProps[] = [
 	{ coefficient: 1.08 },
 	{ coefficient: 1.23 },
 	{ coefficient: 1.42 },
@@ -22,7 +26,7 @@ export const coefficient22 = [
 	{ coefficient: 546.25 },
 	{ coefficient: 2185.0 },
 ];
-export const coefficient20 = [
+export const coefficient20: CoeffProps[] = [
 	{ coefficient: 1.19 },
 	{ coefficient: 1.5 },
 	{ coefficient: 1.92 },
@@ -44,7 +48,7 @@ export const coefficient20 = [
 	{ coefficient: 8412.25 },
 	{ coefficient: 50473.5 },
 ];
-export const coefficient15 = [
+export const coefficient15: CoeffProps[] = [
 	{ coefficient: 1.58 },
 	{ coefficient: 2.71 },
 	{ coefficient: 4.8 },
@@ -61,7 +65,7 @@ export const coefficient15 = [
 	{ coefficient: 282302.0 },
 	{ coefficient: 3105322.0 },
 ];
-export const coefficient9 = [
+export const coefficient9: CoeffProps[] = [
 	{ coefficient: 2.64 },
 	{ coefficient: 7.92 },
 	{ coefficient: 26.01 },
@@ -72,4 +76,4 @@ export const coefficient9 = [
 	{ coefficient: 114166.25 },
 	{ coefficient: 1940826.25 },
 ];
-export const coefficient1 = [{ coefficient: 23.75 }];
+export const coefficient1: CoeffProps[] = [{ coefficient: 23.75 }];
