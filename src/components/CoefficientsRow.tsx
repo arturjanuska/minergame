@@ -1,17 +1,14 @@
-import React, { useContext, useRef } from 'react';
+import { useContext, useRef } from 'react';
 import styles from '../styles/components/gameWindow.module.scss';
-
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { Context } from '../context/MainContext';
-
-type CoefficientsProps = {
-	coefficient: number;
-};
+import { AppContext } from '../context/Context';
+import { CoefficientType } from '../context/reducers';
 
 export default function CoefficientsRow() {
-	const { state } = useContext(Context);
+	const { state, dispatch } = useContext(AppContext);
 
-	const { gameSettings, activeGame, cashPrize, beforeEndOpenedCells } = state;
+	const { coefficients, cellsOpened, status, cashPrize, beforeEndOpenedCells } =
+		state;
 
 	const scrollContainerRef = useRef(null);
 
@@ -46,45 +43,40 @@ export default function CoefficientsRow() {
 			</div>
 			<div
 				className={`${styles.hit__coefficient__row} ${
-					activeGame.status === 'win' ? styles.win : ''
-				} ${activeGame.status === 'lose' ? styles.lose : ''}`}
+					status === 'win' ? styles.win : ''
+				} ${status === 'lose' ? styles.lose : ''}`}
 				ref={scrollContainerRef}
 			>
-				{activeGame.status === 'initial' || activeGame.status === 'active' ? (
-					gameSettings.coefficients.map(
-						(coefficient: CoefficientsProps, idx: number) => (
-							<div
-								className={`${styles.coefficent__box} ${
-									idx === activeGame.cellsOpened - 1 &&
-									activeGame.status === 'active'
-										? styles.hitted_box
-										: ''
-								} ${
-									idx <= activeGame.cellsOpened - 1 &&
-									activeGame.status === 'active'
-										? styles.prev_box
-										: ''
-								}`}
-								key={idx}
-							>
-								<p className={styles.hit}>{idx + 1} Hit</p>
-								<p className={styles.coeff}>{coefficient.coefficient} x</p>
-							</div>
-						)
-					)
-				) : activeGame.status === 'win' ? (
+				{status === 'initial' || status === 'active' ? (
+					coefficients.map((coefficient: CoefficientType, idx: number) => (
+						<div
+							className={`${styles.coefficent__box} ${
+								idx === cellsOpened - 1 && status === 'active'
+									? styles.hitted_box
+									: ''
+							} ${
+								idx <= cellsOpened - 1 && status === 'active'
+									? styles.prev_box
+									: ''
+							}`}
+							key={idx}
+						>
+							<p className={styles.hit}>{idx + 1} Hit</p>
+							<p className={styles.coeff}>{coefficient.coefficient} x</p>
+						</div>
+					))
+				) : status === 'win' ? (
 					<div className={styles.win_row}>
 						<p className={styles.coeff}>
-							{gameSettings.coefficients[beforeEndOpenedCells - 1].coefficient}{' '}
-							x
+							{coefficients[beforeEndOpenedCells - 1].coefficient} x
 						</p>
 						<p className={styles.cash_prize}>+ {cashPrize} €</p>
 						<p className={styles.win_status}>WIN</p>
 					</div>
-				) : activeGame.status === 'lose' ? (
+				) : status === 'lose' ? (
 					<div className={styles.lose_row}>
 						<p className={styles.coeff}>
-							{gameSettings.coefficients[beforeEndOpenedCells].coefficient} x
+							{coefficients[beforeEndOpenedCells].coefficient} x
 						</p>
 						<p className={styles.bomb}>BOMB</p>
 						<p className={styles.lose_hits}>{beforeEndOpenedCells + 1} HIT</p>

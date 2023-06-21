@@ -1,39 +1,42 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import styles from '../styles/components/gameWindow.module.scss';
 import Cell from './Cell';
-
-import { Context } from '../context/MainContext';
 import CoefficientsRow from './CoefficientsRow';
+import { AppContext } from '../context/Context';
+import { Types, CellType, StatusType } from '../context/reducers';
+import { updateCells, checkCells, setStatus } from '../helpers/stateManagement';
 
-type CellProps = {
-	index: number;
-	bomb: boolean;
-	checked: boolean;
-};
+// DONE
 
 function Game() {
-	const { state, updateCells, setStatus, setOpenedCellsCount } =
-		useContext(Context);
+	const { state, dispatch } = useContext(AppContext);
 
-	const { gameSettings, gameCells } = state;
+	const { bombs, gameCells } = state;
 
 	const cells = Array.from({ length: 25 });
 
-	const checkCells = (cells: CellProps[]): boolean => {
-		const isBomb = cells.some(
-			(cell) => cell.checked === true && cell.bomb === true
-		);
-		if (isBomb) {
-			return true;
-		} else {
-			return false;
-		}
+	const handleCells = (cellsArr: CellType[]) => {
+		const result = updateCells(cellsArr);
+		dispatch({
+			type: Types.Update,
+			payload: {
+				cellsArr: result.cellsArr,
+				cellsOpened: result.cellsOpened > 24 ? 0 : result.cellsOpened,
+			},
+		});
+	};
+
+	const handleStatus = (status: StatusType) => {
+		const statusResult = setStatus(status);
+		dispatch({
+			type: Types.Status,
+			payload: statusResult,
+		});
 	};
 
 	const flipCell = (index: number) => {
-		// console.log('Clicked cell index ==> ', index);
-		const updatedCells = gameCells.map((cell: CellProps) => {
+		const updatedCells = gameCells.map((cell: CellType) => {
 			if (cell.index === index) {
 				return {
 					...cell,
@@ -43,26 +46,32 @@ function Game() {
 			return cell;
 		});
 		const isBomb = checkCells(updatedCells);
-		// console.log('Bomb? ==> ', isBomb);
 		const openedCellsCount = updatedCells.filter(
-			(cell: CellProps) => cell.checked
+			(cell: CellType) => cell.checked
 		);
 		if (isBomb) {
 			setTimeout(() => {
-				const allFlipedCells = gameCells.map((cell: CellProps) => {
+				const allFlipedCells = gameCells.map((cell: CellType) => {
 					return {
 						...cell,
 						checked: true,
 					};
 				});
-				updateCells(allFlipedCells);
-				setStatus('lose');
-			}, 500);
+				handleCells(allFlipedCells);
+				handleStatus('lose');
+			}, 200);
 		} else {
 			setOpenedCellsCount(openedCellsCount.length);
-			updateCells(updatedCells);
-			setStatus('active');
+			handleCells(updatedCells);
+			handleStatus('active');
 		}
+	};
+
+	const setOpenedCellsCount = (count: number) => {
+		dispatch({
+			type: Types.CellsCount,
+			payload: count,
+		});
 	};
 
 	return (
@@ -77,7 +86,7 @@ function Game() {
 									flip={(idx) => 'Log in and Click PLAY'}
 								/>
 						  ))
-						: gameCells.map((cell: CellProps, idx: number) => (
+						: gameCells.map((cell: CellType, idx: number) => (
 								<Cell
 									key={idx}
 									cellIdx={idx}
@@ -98,7 +107,7 @@ function Game() {
 							objectFit: 'contain',
 						}}
 					/>
-					<p>{25 - gameSettings.bombs}</p>
+					<p>{25 - bombs}</p>
 				</div>
 				<div className={styles.miner__counter__coll__bombs}>
 					<img
@@ -110,7 +119,7 @@ function Game() {
 							objectFit: 'contain',
 						}}
 					/>
-					<p>{gameSettings.bombs}</p>
+					<p>{bombs}</p>
 				</div>
 			</div>
 		</div>

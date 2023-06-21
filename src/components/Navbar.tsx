@@ -1,26 +1,24 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import ThemeSwitcher from './ThemeSwitcher';
-import { Context } from '../context/MainContext';
 import styles from '../styles/components/navbar.module.scss';
-
-interface ContextStateProps {
-	state: object;
-	// theme: string;
-}
+import { AppContext } from '../context/Context';
+import CustomLanguageSelect from './CustomLanguageSelect';
 
 function Navbar() {
-	const { state } = useContext<ContextStateProps>(Context);
+	const { state } = useContext(AppContext);
 
 	return (
 		<nav className={`${styles.nav} ${styles[state.theme]}`}>
-			<h1>GET MONEY</h1>
+			<h1
+				style={{
+					textAlign: 'center',
+				}}
+			>
+				GET <br /> MONEY
+			</h1>
 			<ul className={`${styles.list}`}>
 				<li>
-					<select name='lang'>
-						<option value='EN'>EN</option>
-						<option value='LT'>LT</option>
-						<option value='RU'>RU</option>
-					</select>
+					<CustomLanguageSelect />
 				</li>
 				<li>
 					<ThemeSwitcher />

@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { AppContext } from '../context/Context';
 import styles from '../styles/components/gameWindow.module.scss';
 
 type CellProps = {
@@ -8,17 +10,17 @@ type CellProps = {
 };
 
 function Cell({ cellIdx, bomb, checked, flip }: CellProps) {
+	const { state } = useContext(AppContext);
+
+	const { status } = state;
+
 	return (
 		<div className={styles.cell__container}>
 			<div
 				className={`${styles.cell} ${checked ? styles.flip : ''}`}
 				onClick={() => {
-					if (!checked) {
-						// console.log('Is this cell checked?', checked);
-						flip(cellIdx);
-					} else {
-						return;
-					}
+					if (status !== 'active') return;
+					!checked ? flip(cellIdx) : null;
 				}}
 			>
 				<div className={styles.front}></div>

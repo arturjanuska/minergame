@@ -1,10 +1,24 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import React, { useContext } from 'react';
 import styles from '../styles/components/switcher.module.scss';
-import { Context } from '../context/MainContext';
 import { HiOutlineSun, HiOutlineMoon } from 'react-icons/hi';
+import { AppContext } from '../context/Context';
+import { Types } from '../context/reducers';
 
 function ThemeSwitcher() {
-	const { state, handleTheme } = useContext(Context);
+	const { state, dispatch } = useContext(AppContext);
+
+	const handleTheme = (currentTheme: 'dark' | 'light') => {
+		currentTheme === 'light'
+			? dispatch({
+					type: Types.Theme,
+					payload: 'dark',
+			  })
+			: dispatch({
+					type: Types.Theme,
+					payload: 'light',
+			  });
+	};
 
 	return (
 		<div

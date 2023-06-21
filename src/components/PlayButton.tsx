@@ -1,123 +1,147 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { useContext } from 'react';
-import { Context } from '../context/MainContext';
+import { useContext, useState, useEffect } from 'react';
 
-type Props = {
-	gameStatus: {
-		status: string;
-		cellsOpened: number;
+import { StatusType, CellType, Types } from '../context/reducers';
+import { AppContext } from '../context/Context';
+import {
+	generateCells,
+	setStatus,
+	updateCells,
+} from '../helpers/stateManagement';
+
+// DONE
+
+function PlayButton() {
+	const { state, dispatch } = useContext(AppContext);
+
+	const [buttonTheme, setButtonTheme] = useState({
+		text: 'START',
+		background: 'Orange',
+	});
+
+	const { bid, bombs, coefficients, status, cellsOpened, gameCells } = state;
+
+	const handleButtonTheme = (): void => {
+		if (status === 'initial') {
+			setButtonTheme({
+				text: 'START',
+				background: 'Orange',
+			});
+		}
+		if (status === 'active') {
+			if (cellsOpened === 0) {
+				setButtonTheme({
+					text: 'CHOOSE CELL',
+					background: 'grey',
+				});
+			} else {
+				setButtonTheme({
+					text: `TAKE: ${Number(
+						bid * coefficients[cellsOpened - 1].coefficient
+					).toFixed(2)}`,
+					background: 'Green',
+				});
+			}
+		}
+		if (status === 'lose') {
+			setButtonTheme({
+				text: 'PLAY AGAIN',
+				background: 'Orange',
+			});
+		}
+		if (status === 'win') {
+			setButtonTheme({
+				text: 'PLAY AGAIN',
+				background: 'Orange',
+			});
+		}
 	};
-};
 
-type ButtonTheme = {
-	text: string;
-	background: string;
-};
+	useEffect(() => {
+		handleButtonTheme();
+	}, [status, cellsOpened]);
 
-type CellProps = {
-	index: number;
-	bomb: boolean;
-	checked: boolean;
-};
+	const handleStatus = (status: StatusType): void => {
+		const statusResult = setStatus(status);
+		dispatch({
+			type: Types.Status,
+			payload: statusResult,
+		});
+	};
 
-function PlayButton({ gameStatus }: Props) {
-	const { state, startGame, takeMoney, setStatus, updateCells } =
-		useContext(Context);
+	const handleCells = (cellsArr: CellType[]) => {
+		const result = updateCells(cellsArr);
+		dispatch({
+			type: Types.Update,
+			payload: {
+				cellsArr: result.cellsArr,
+				cellsOpened: result.cellsOpened > 24 ? 0 : result.cellsOpened,
+			},
+		});
+	};
 
-	const { gameSettings, activeGame, gameCells } = state;
+	const startGame = (bombs: number) => {
+		const generatedGame = generateCells(bombs);
+		dispatch({
+			type: Types.Generate,
+			payload: generatedGame,
+		});
+	};
 
 	const flipAllCells = () => {
-		const allCells = gameCells.map((cell: CellProps) => {
+		const allCells = gameCells.map((cell: CellType) => {
 			return {
 				...cell,
 				checked: true,
 			};
 		});
-		updateCells(allCells);
+		handleCells(allCells);
 	};
 
 	const flipBackAllCells = () => {
-		const allCells = gameCells.map((cell: CellProps) => {
+		const allCells = gameCells.map((cell: CellType) => {
 			return {
 				...cell,
 				checked: false,
 			};
 		});
-		updateCells(allCells);
+		handleCells(allCells);
 	};
 
-	const handleButtonTheme = (status: string): ButtonTheme => {
-		if (status === 'initial') {
-			return {
-				text: 'START',
-				background: 'Orange',
-			};
-		}
-		if (status === 'active') {
-			if (gameStatus.cellsOpened === 0) {
-				return {
-					text: 'CHOOSE CELL',
-					background: 'grey',
-				};
-			} else {
-				return {
-					text: `TAKE: ${
-						gameSettings.bid *
-						gameSettings.coefficients[
-							gameStatus.cellsOpened - 1
-						].coefficient.toFixed(2)
-					}`,
-					background: 'Green',
-				};
-			}
-		}
-		if (status === 'lose') {
-			return {
-				text: 'PLAY AGAIN',
-				background: 'Orange',
-			};
-		}
-		if (status === 'win') {
-			return {
-				text: 'PLAY AGAIN',
-				background: 'Orange',
-			};
-		}
-		throw new Error(`Invalid status: ${status}`);
+	const takeMoney = (coeff: number, bid: number) => {
+		const sum = (bid * coeff).toFixed(2);
+		dispatch({
+			type: Types.Prize,
+			payload: Number(sum),
+		});
 	};
 
 	return (
 		<button
 			onClick={() => {
-				if (activeGame.status === 'initial') {
-					// console.log('clicked play');
-					startGame(gameSettings.bombs);
-					setStatus('active');
+				if (status === 'initial') {
+					handleStatus('active');
+					startGame(bombs);
 				}
-				if (activeGame.status === 'active') {
-					if (activeGame.cellsOpened === 0) return;
-					// console.log('clicked Take money');
-					takeMoney(
-						gameSettings.coefficients[gameStatus.cellsOpened - 1].coefficient,
-						gameSettings.bid
-					);
-
-					setStatus('win');
+				if (status === 'active') {
+					if (cellsOpened === 0) return;
+					takeMoney(coefficients[cellsOpened - 1].coefficient, bid);
+					handleStatus('win');
 					flipAllCells();
 				}
-				if (activeGame.status === 'win' || activeGame.status === 'lose') {
-					// console.log('clicked PLAY AGAIN');
+				if (status === 'win' || status === 'lose') {
 					flipBackAllCells();
 					setTimeout(() => {
-						setStatus('initial');
-					}, 1000);
+						handleStatus('initial');
+					}, 800);
 				}
 			}}
 			style={{
-				background: handleButtonTheme(gameStatus.status).background,
+				background: buttonTheme.background,
 			}}
 		>
-			{handleButtonTheme(gameStatus.status).text}
+			{buttonTheme.text}
 		</button>
 	);
 }

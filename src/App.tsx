@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import './styles/_main.scss';
-import { Context } from './context/MainContext';
 import Navbar from './components/Navbar';
 import GameWindow from './components/GameWindow';
+import { AppContext } from './context/Context';
 
 function App() {
-	const { state, handleTheme } = useContext(Context);
+	const { state, dispatch } = useContext(AppContext);
 
 	return (
 		<div className={state.theme}>

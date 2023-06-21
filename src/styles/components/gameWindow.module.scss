@@ -40,7 +40,7 @@
 				position: relative;
 
 				.cells {
-					gap: 5px;
+					gap: 8px;
 					padding: 10px;
 					display: flex;
 					justify-content: center;
@@ -381,6 +381,8 @@
 						gap: 0.5rem;
 						.count__dec,
 						.count__inc {
+							border: none;
+							background-color: transparent;
 							display: flex;
 							justify-content: center;
 							align-items: center;

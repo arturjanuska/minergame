@@ -1,13 +1,16 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { useContext, useState } from 'react';
+import { useContext } from 'react';
 import styles from '../styles/components/gameWindow.module.scss';
-import { Context } from '../context/MainContext';
 import PlayButton from './PlayButton';
+import { AppContext } from '../context/Context';
+import { Types } from '../context/reducers';
+import BombSelectButton from './BombSelectButton';
+import BidButton from './BidButton';
 
 function GameOptions() {
-	const { state, handleBid, handleBombs } = useContext(Context);
+	const { state, dispatch } = useContext(AppContext);
 
-	const { gameSettings, activeGame } = state;
+	const { bid, bombs, status } = state;
 
 	return (
 		<div className={styles.settings}>
@@ -16,141 +19,46 @@ function GameOptions() {
 				<div
 					className={styles.bombs__selector}
 					style={{
-						opacity: activeGame.status !== 'initial' ? 0.8 : 1,
+						opacity: status !== 'initial' ? 0.8 : 1,
 					}}
 				>
-					<div
-						className={`${styles.bomb__square} ${
-							gameSettings.bombs === 3 ? styles.selected : ''
-						}`}
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBombs(3);
-						}}
-					>
-						<p>3</p>
-					</div>
-					<div
-						className={`${styles.bomb__square} ${
-							gameSettings.bombs === 5 ? styles.selected : ''
-						}`}
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBombs(5);
-						}}
-					>
-						<p>5</p>
-					</div>
-					<div
-						className={`${styles.bomb__square} ${
-							gameSettings.bombs === 10 ? styles.selected : ''
-						}`}
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBombs(10);
-						}}
-					>
-						<p>10</p>
-					</div>
-					<div
-						className={`${styles.bomb__square} ${
-							gameSettings.bombs === 16 ? styles.selected : ''
-						}`}
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBombs(16);
-						}}
-					>
-						<p>16</p>
-					</div>
-					<div
-						className={`${styles.bomb__square} ${
-							gameSettings.bombs === 24 ? styles.selected : ''
-						}`}
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBombs(24);
-						}}
-					>
-						<p>24</p>
-					</div>
+					<BombSelectButton bombs={3} />
+					<BombSelectButton bombs={5} />
+					<BombSelectButton bombs={10} />
+					<BombSelectButton bombs={16} />
+					<BombSelectButton bombs={24} />
 				</div>
 				<div className={styles.another}>
 					<p className={styles.title}>Another</p>
-					<p className={styles.bomb__number}>{gameSettings.bombs}</p>
+					<p className={styles.bomb__number}>{bombs}</p>
 				</div>
 			</div>
 			<div className={styles.play__button}>
-				<PlayButton gameStatus={activeGame} />
+				<PlayButton />
 			</div>
 			<div
 				className={styles.bid}
 				style={{
-					opacity: activeGame.status !== 'initial' ? 0.8 : 1,
+					opacity: status !== 'initial' ? 0.8 : 1,
 				}}
 			>
 				<p className={styles.bid__title}>Bid</p>
 				<div className={styles.bid__selector}>
 					<p className={styles.bid__count}>
-						{gameSettings.bid.toFixed(2)} <span>€</span>
+						{bid.toFixed(2)} <span>€</span>
 					</p>
 					<div className={styles.count__selector}>
-						<div
-							className={styles.count__dec}
-							onClick={() => {
-								if (activeGame.status !== 'initial') return;
-								if (gameSettings.bid === 1) return;
-								handleBid(gameSettings.bid - 1);
-							}}
-						>
-							<p>-</p>
-						</div>
-						<div
-							className={styles.count__inc}
-							onClick={() => {
-								if (activeGame.status !== 'initial') return;
-								handleBid(gameSettings.bid + 1);
-							}}
-						>
-							<p>+</p>
-						</div>
+						<BidButton text='-' />
+						<BidButton text='+' />
 					</div>
 				</div>
 				<div className={styles.bid__numbers}>
-					<button className={styles.bid__min__max}>Min</button>
-					<button
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBid(gameSettings.bid + 10);
-						}}
-					>
-						+10
-					</button>
-					<button
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBid(gameSettings.bid + 50);
-						}}
-					>
-						+50
-					</button>
-					<button
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBid(gameSettings.bid + 100);
-						}}
-					>
-						+100
-					</button>
-					<button
-						onClick={() => {
-							if (activeGame.status !== 'initial') return;
-							handleBid(gameSettings.bid + 200);
-						}}
-					>
-						+200
-					</button>
-					<button className={styles.bid__min__max}>Max</button>
+					<BidButton text='Min' />
+					<BidButton count={10} />
+					<BidButton count={50} />
+					<BidButton count={100} />
+					<BidButton count={200} />
+					<BidButton text='Max' />
 				</div>
 			</div>
 		</div>
