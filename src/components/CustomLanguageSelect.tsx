@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import styles from '../styles/components/navbar.module.scss';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import UK from '../assets/flags/UK.png';
