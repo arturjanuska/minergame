@@ -7,12 +7,10 @@ import { AppContext } from '../context/Context';
 import { Types, CellType, StatusType } from '../context/reducers';
 import { updateCells, checkCells, setStatus } from '../helpers/stateManagement';
 
-// DONE
-
 function Game() {
 	const { state, dispatch } = useContext(AppContext);
 
-	const { bombs, gameCells } = state;
+	const { bombs, gameCells, coefficients } = state;
 
 	const cells = Array.from({ length: 25 });
 
@@ -33,6 +31,43 @@ function Game() {
 			type: Types.Status,
 			payload: statusResult,
 		});
+	};
+
+	const gameEnd = (status: 'win' | 'lose'): void => {
+		if (status === 'win') {
+			const username = state.loggedUser.username;
+			const bid = state.bid;
+			const bombs = state.bombs;
+			const ratio = coefficients[state.beforeEndOpenedCells - 1].coefficient;
+			const winning = state.cashPrize;
+			return dispatch({
+				type: Types.Stats,
+				payload: {
+					username,
+					bid,
+					bombs,
+					ratio,
+					winning,
+				},
+			});
+		}
+		if (status === 'lose') {
+			const username = state.loggedUser.username;
+			const bid = state.bid;
+			const bombs = state.bombs;
+			const ratio = coefficients[state.beforeEndOpenedCells].coefficient;
+			const winning = '-';
+			return dispatch({
+				type: Types.Stats,
+				payload: {
+					username,
+					bid,
+					bombs,
+					ratio,
+					winning,
+				},
+			});
+		}
 	};
 
 	const flipCell = (index: number) => {
@@ -58,6 +93,7 @@ function Game() {
 					};
 				});
 				handleCells(allFlipedCells);
+				gameEnd('lose');
 				handleStatus('lose');
 			}, 200);
 		} else {
@@ -83,7 +119,7 @@ function Game() {
 								<Cell
 									cellIdx={idx}
 									key={idx}
-									flip={(idx) => 'Log in and Click PLAY'}
+									flip={(idx) => `Log in and Click PLAY ${idx}`}
 								/>
 						  ))
 						: gameCells.map((cell: CellType, idx: number) => (

@@ -6,21 +6,34 @@
 	justify-content: space-between;
 	padding: 0 2rem;
 	align-items: center;
-	transition: $trans_05;
 	height: 3.4rem;
+	h1 {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 30px;
+		font-family: 'Ubuntu', sans-serif;
+		font-weight: 600;
+		letter-spacing: 1px;
+		font-style: italic;
+		img {
+			width: 42px;
+			height: 42px;
+		}
+	}
 
 	.list {
 		padding: 0;
 		margin: 0;
 		display: flex;
 		list-style: none;
-		justify-content: space-around;
+		justify-content: center;
 		align-items: center;
 		li:first-child {
 			width: 110px;
 		}
 		li {
-			margin: 1rem;
+			margin: 0.5rem;
 			.language__container {
 				position: relative;
 				height: 100%;
@@ -29,13 +42,10 @@
 				justify-content: center;
 				align-items: center;
 
-				cursor: pointer;
 				&.open {
 					border: 1px solid #ccc;
 				}
-				&:hover .language__select .icon {
-					opacity: 1;
-				}
+
 				.language__select {
 					display: flex;
 					justify-content: center;
@@ -45,6 +55,8 @@
 					border-radius: 8px;
 					box-sizing: border-box;
 					padding: 0.2rem 0.4rem;
+					cursor: pointer;
+
 					.flag {
 						box-sizing: border-box;
 						padding: 0.05rem;
@@ -60,6 +72,9 @@
 					.open {
 						transform: rotate(180deg);
 					}
+					&:hover .icon {
+						opacity: 1;
+					}
 				}
 				.dark {
 					background: #1c1e26ad;
@@ -68,18 +83,20 @@
 					background: #f7e6c4c0;
 				}
 				.language__options {
+					z-index: 3;
 					position: absolute;
-					top: calc(100% + 0.1rem);
+					top: calc(100% + 0.6rem);
 					left: 0;
 					width: 100%;
-					background-color: #ffffff;
+
 					border-radius: 8px;
 					box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 					overflow: hidden;
-					z-index: 1;
 					transition: opacity 0.2s ease-in-out;
 
 					.language__box {
+						position: relative;
+						z-index: 10;
 						padding: 0.5rem;
 						display: flex;
 						align-items: center;
@@ -87,7 +104,7 @@
 						cursor: pointer;
 
 						&:hover {
-							background-color: #f0f0f0;
+							background-color: #808080;
 						}
 
 						.flag {
@@ -103,12 +120,112 @@
 						}
 					}
 					.dark {
-						background: #1c1e26ad;
+						background: #1c1e26;
+						color: #f0f0f0;
 					}
 					.light {
 						background: #f7e6c4c0;
+						color: #1c1e26;
 					}
 				}
+			}
+		}
+		.profile {
+			display: flex;
+			align-items: center;
+			position: relative;
+			height: 100%;
+			gap: 1rem;
+			p {
+				font-size: 1.2rem;
+			}
+			img {
+				width: 42px;
+				height: 42px;
+				border-radius: 50%;
+				transition: 0.2s ease-in-out;
+				padding: 0.2rem;
+				&:hover {
+					cursor: pointer;
+					background-color: #ccc;
+				}
+			}
+		}
+
+		.profile__options {
+			padding: 0;
+			z-index: 3;
+			position: absolute;
+			top: calc(100% + 0.15rem);
+			right: 0;
+			width: min-content;
+
+			border-bottom-left-radius: 8px;
+			border-bottom-right-radius: 8px;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+			overflow: hidden;
+
+			li {
+				margin: 0;
+				text-align: center;
+				list-style: none;
+				padding: 0.6rem 0.2rem;
+				user-select: none;
+				transition: 0.2s ease;
+				&:hover {
+					cursor: pointer;
+					background-color: #808080;
+				}
+			}
+		}
+		.dark {
+			background: #1c1e26;
+			color: #f0f0f0;
+		}
+		.light {
+			background: #f7e6c4c0;
+			color: #1c1e26;
+		}
+		.balance {
+			p {
+				font-size: 1.1rem;
+				margin: 0 1rem;
+				span {
+					font-weight: bold;
+				}
+			}
+		}
+		.login__button {
+			border: 1px solid #27273831;
+			background: $dark_primary;
+			color: #13151d;
+			&:hover {
+				background: $gradient_clickable_box;
+				border: 1px solid $gradient_clickable_box;
+			}
+		}
+		.registration__button {
+			border: 1px solid $dark_theme_bg;
+			background: $dark_theme_bg;
+			color: $dark_theme_text;
+			&:hover {
+				background: #262733;
+			}
+		}
+		.login__button,
+		.registration__button {
+			padding: 0.5rem 1.1rem;
+			border-radius: 6px;
+			font-weight: 500;
+			font-size: 1rem;
+			box-sizing: border-box;
+			transition: 0.2s ease;
+			user-select: none;
+			&:hover {
+				cursor: pointer;
+			}
+			&:active {
+				transform: scale(0.98);
 			}
 		}
 	}

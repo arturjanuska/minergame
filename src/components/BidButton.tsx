@@ -17,8 +17,12 @@ function BidButton({ text, count }: Props) {
 				text === 'Min' || text === 'Max' ? styles.bid__min__max : ''
 			} ${text === '-' ? styles.count__dec : styles.count__inc}`}
 			onClick={() => {
+				if (count) {
+					if (state.bid + count > state.loggedUser.cash) return;
+				}
 				if (state.status !== 'initial') return;
 				if (text === '-' && state.bid === 1) return;
+				if (text === '+' && state.bid + 1 > state.loggedUser.cash) return;
 				dispatch({
 					type: Types.Bid,
 					payload: count
@@ -26,7 +30,7 @@ function BidButton({ text, count }: Props) {
 						: text === 'Min'
 						? 1
 						: text === 'Max'
-						? 500
+						? state.loggedUser.cash
 						: text === '-'
 						? state.bid - 1
 						: state.bid + 1,

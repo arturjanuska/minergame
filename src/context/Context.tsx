@@ -7,11 +7,13 @@ import {
 	SettingsActions,
 	CellsActions,
 	Types,
+	userReducer,
+	UserActions,
 } from './reducers';
 
 type AppContextValue = {
 	state: StateType;
-	dispatch: Dispatch<SettingsActions | CellsActions>;
+	dispatch: Dispatch<SettingsActions | CellsActions | UserActions>;
 };
 
 type AppProviderProps = {
@@ -32,6 +34,14 @@ const initialState: StateType = {
 	cellsOpened: 0,
 	cashPrize: 0,
 	beforeEndOpenedCells: 0,
+	registeredUsers: [],
+	isLogged: false,
+	loggedUser: {
+		id: 0,
+		username: '',
+		cash: 0,
+	},
+	stats: [],
 };
 
 const AppContext = createContext<AppContextValue>({
@@ -39,9 +49,12 @@ const AppContext = createContext<AppContextValue>({
 	dispatch: () => null,
 });
 
-const mainReducer: React.Reducer<StateType, SettingsActions | CellsActions> = (
+const mainReducer: React.Reducer<
+	StateType,
+	SettingsActions | CellsActions | UserActions
+> = (
 	state: StateType,
-	action: SettingsActions | CellsActions
+	action: SettingsActions | CellsActions | UserActions
 ) => {
 	switch (action.type) {
 		// Handle settings actions
@@ -63,6 +76,16 @@ const mainReducer: React.Reducer<StateType, SettingsActions | CellsActions> = (
 				...state,
 				...cellsReducer(state, action as CellsActions),
 			};
+		// Handle user actions
+		case Types.RegUser:
+		case Types.IsLogged:
+		case Types.LoggedUser:
+		case Types.Stats:
+		case Types.Cash:
+			return {
+				...state,
+				...userReducer(state, action as UserActions),
+			};
 		default:
 			return state;
 	}
@@ -71,7 +94,7 @@ const mainReducer: React.Reducer<StateType, SettingsActions | CellsActions> = (
 const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 	const [state, dispatch]: [
 		StateType,
-		Dispatch<SettingsActions | CellsActions>
+		Dispatch<SettingsActions | CellsActions | UserActions>
 	] = useReducer(mainReducer, initialState);
 
 	return (

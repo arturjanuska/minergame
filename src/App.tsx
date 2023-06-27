@@ -1,19 +1,22 @@
-import { useContext } from 'react';
 import './styles/_main.scss';
-import Navbar from './components/Navbar';
 import GameWindow from './components/GameWindow';
-import { AppContext } from './context/Context';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import AuthPage from './pages/AuthPage';
 
 function App() {
-	const { state, dispatch } = useContext(AppContext);
-
 	return (
-		<div className={state.theme}>
-			<Navbar />
-			<div className='background transition'>
-				<GameWindow />
-			</div>
-		</div>
+		<BrowserRouter>
+			<Routes>
+				<Route
+					path='/'
+					element={<GameWindow />}
+				/>
+				<Route
+					path='/auth'
+					element={<AuthPage />}
+				/>
+			</Routes>
+		</BrowserRouter>
 	);
 }
 

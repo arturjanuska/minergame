@@ -3,9 +3,11 @@ import styles from '../styles/components/gameWindow.module.scss';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { AppContext } from '../context/Context';
 import { CoefficientType } from '../context/reducers';
+import { useTranslation } from 'react-i18next';
 
 export default function CoefficientsRow() {
-	const { state, dispatch } = useContext(AppContext);
+	const { state } = useContext(AppContext);
+	const { t } = useTranslation();
 
 	const { coefficients, cellsOpened, status, cashPrize, beforeEndOpenedCells } =
 		state;
@@ -16,7 +18,7 @@ export default function CoefficientsRow() {
 		if (scrollContainerRef.current) {
 			const { scrollLeft } = scrollContainerRef.current;
 			const newScrollLeft = scrollLeft + 80;
-			scrollContainerRef.current.scrollTo({
+			(scrollContainerRef.current as HTMLElement).scrollTo({
 				left: newScrollLeft,
 				behavior: 'smooth',
 			});
@@ -26,7 +28,7 @@ export default function CoefficientsRow() {
 		if (scrollContainerRef.current) {
 			const { scrollleft } = scrollContainerRef.current;
 			const newScrollleft = scrollleft - 80;
-			scrollContainerRef.current.scrollTo({
+			(scrollContainerRef.current as HTMLElement).scrollTo({
 				left: newScrollleft,
 				behavior: 'smooth',
 			});
@@ -61,7 +63,9 @@ export default function CoefficientsRow() {
 							}`}
 							key={idx}
 						>
-							<p className={styles.hit}>{idx + 1} Hit</p>
+							<p className={styles.hit}>
+								{idx + 1} {t('hit')}
+							</p>
 							<p className={styles.coeff}>{coefficient.coefficient} x</p>
 						</div>
 					))
@@ -71,15 +75,17 @@ export default function CoefficientsRow() {
 							{coefficients[beforeEndOpenedCells - 1].coefficient} x
 						</p>
 						<p className={styles.cash_prize}>+ {cashPrize} €</p>
-						<p className={styles.win_status}>WIN</p>
+						<p className={styles.win_status}>{t('win')}</p>
 					</div>
 				) : status === 'lose' ? (
 					<div className={styles.lose_row}>
 						<p className={styles.coeff}>
 							{coefficients[beforeEndOpenedCells].coefficient} x
 						</p>
-						<p className={styles.bomb}>BOMB</p>
-						<p className={styles.lose_hits}>{beforeEndOpenedCells + 1} HIT</p>
+						<p className={styles.bomb}>{t('bomb')}</p>
+						<p className={styles.lose_hits}>
+							{beforeEndOpenedCells + 1} {t('hit')}
+						</p>
 					</div>
 				) : (
 					''

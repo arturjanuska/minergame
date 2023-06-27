@@ -22,6 +22,11 @@ export enum Types {
 	Update = 'update_cells',
 	CellsCount = 'set_cells_count',
 	Language = 'set_language',
+	RegUser = 'add_user',
+	IsLogged = 'set_logged',
+	LoggedUser = 'set_user',
+	Stats = 'set_data',
+	Cash = 'handle_cash',
 }
 
 export type BombsType = number;
@@ -53,6 +58,28 @@ export type LanguageType = {
 	stateTitle: string;
 };
 
+export type UserType = {
+	id: number;
+	username: string;
+	password: string;
+	cash: number;
+};
+
+export type StatType = {
+	username: string;
+	bid: number;
+	bombs: number;
+	ratio: number;
+	winning: number | '-';
+};
+
+export type LoggedUserType = {
+	id: number;
+	username: string;
+	password?: string;
+	cash: number;
+};
+
 export type StateType = {
 	theme: ThemeType;
 	bombs: BombsType;
@@ -64,6 +91,10 @@ export type StateType = {
 	cellsOpened: CellOpenedType;
 	cashPrize: CashPrizeType;
 	beforeEndOpenedCells: BeforeEndOpenedCellsType;
+	registeredUsers: UserType[];
+	isLogged: boolean;
+	loggedUser: LoggedUserType;
+	stats: StatType[];
 };
 
 // settings
@@ -154,6 +185,58 @@ export const cellsReducer = (state: StateType, action: CellsActions) => {
 				...state,
 				beforeEndOpenedCells: action.payload,
 			};
+		default:
+			return state;
+	}
+};
+
+// user
+
+type UserPayload = {
+	[Types.RegUser]: UserType;
+	[Types.IsLogged]: boolean;
+	[Types.LoggedUser]: {
+		isLogged: boolean;
+		loggedUser: LoggedUserType;
+	};
+	[Types.Stats]: StatType;
+	[Types.Cash]: number;
+};
+
+export type UserActions = ActionMap<UserPayload>[keyof ActionMap<UserPayload>];
+
+export const userReducer = (state: StateType, action: UserActions) => {
+	switch (action.type) {
+		case Types.RegUser:
+			return {
+				...state,
+				registeredUsers: [...state.registeredUsers, action.payload],
+			};
+		case Types.IsLogged:
+			return {
+				...state,
+				isLogged: action.payload,
+			};
+		case Types.LoggedUser:
+			return {
+				...state,
+				isLogged: action.payload.isLogged,
+				loggedUser: action.payload.loggedUser,
+			};
+		case Types.Stats:
+			return {
+				...state,
+				stats: [action.payload, ...state.stats],
+			};
+		case Types.Cash:
+			return {
+				...state,
+				loggedUser: {
+					...state.loggedUser,
+					cash: action.payload,
+				},
+			};
+
 		default:
 			return state;
 	}

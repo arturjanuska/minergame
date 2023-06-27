@@ -6,14 +6,105 @@
 	margin: 0 auto;
 	height: 100%;
 	box-sizing: border-box;
-	border: 1px solid black;
+
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
 	gap: 1rem;
 	.left__side {
 		flex: 2;
-		border: 1px solid red;
+		.stats__container {
+			max-height: 640px;
+			overflow: hidden;
+			overflow-y: scroll;
+			color: #f0f0f0;
+			.stats__top__row {
+				display: flex;
+				justify-content: space-between;
+				p {
+					font-size: 14px;
+					text-transform: uppercase;
+					font-weight: 700;
+					color: #5c5f68;
+				}
+			}
+			.stats__list {
+				display: flex;
+				flex-direction: column;
+				gap: 0.6rem;
+				padding: 0.2rem 0.4rem;
+				.stat__win {
+					border: 1px solid rgba(13, 99, 13, 0.7);
+					background: $success_bet_bg;
+				}
+				.stat__lose {
+					border: 1px solid rgba(156, 9, 9, 0.7);
+
+					background: $unsuccess_bet_bg;
+				}
+				.stat__row {
+					border-radius: 0.8rem;
+					overflow: hidden;
+					display: flex;
+					align-items: center;
+					padding: 0.2rem 0.4rem;
+					box-sizing: border-box;
+					.player {
+						flex: 1.6;
+						display: flex;
+						align-items: center;
+
+						img {
+							width: 40px;
+							height: 40px;
+						}
+						.nick__bet {
+							.nick {
+								font-size: 0.8rem;
+							}
+							.bet {
+								font-size: 0.8rem;
+								color: #fab42d;
+							}
+						}
+					}
+					.bombs {
+						flex: 0.6;
+						display: flex;
+						justify-content: center;
+						p {
+							font-size: 0.8rem;
+							font-weight: bold;
+						}
+					}
+					.ratio {
+						flex: 1;
+						display: flex;
+						justify-content: center;
+
+						p {
+							font-size: 0.8rem;
+							font-weight: bold;
+
+							padding: 0.2rem;
+							border-radius: 0.3rem;
+							background: #1bcd49;
+							margin-left: 1.2rem;
+						}
+					}
+					.winning {
+						flex: 0.7;
+						display: flex;
+						justify-content: flex-end;
+						margin-right: 1rem;
+						p {
+							font-size: 0.8rem;
+							font-weight: bold;
+						}
+					}
+				}
+			}
+		}
 	}
 	.right__side {
 		flex: 4;
@@ -25,11 +116,11 @@
 		.stars_bg {
 			background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fclipground.com%2Fimages%2Fstar-overlay-png-4.png&f=1&nofb=1&ipt=4e8e1849ccff03b791efa7c3285c99a322f05a20ed281b2df580456379df0722&ipo=images');
 			background-size: 80%;
-			z-index: 2;
+			// z-index: 2;
 			.game {
 				background: url('https://getx13.bond/crash/trees-bg.webp') repeat-x
 					bottom;
-				z-index: 3;
+				// z-index: 3;
 				width: 100%;
 				display: flex;
 				flex-direction: column;
@@ -326,6 +417,7 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
+
 				button {
 					border: none;
 					width: 155px;
@@ -335,7 +427,8 @@
 					align-items: center;
 					border-radius: 50%;
 					background: $gradient_clickable_box;
-					font-weight: bold;
+					font-family: 'Nunito Sans', sans-serif;
+					font-weight: 900;
 					font-size: 18px;
 					transition: transform 0.2s ease;
 					&:hover {

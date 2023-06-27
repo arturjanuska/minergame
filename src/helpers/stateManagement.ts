@@ -1,4 +1,4 @@
-import { CellType, StatusType } from '../context/reducers';
+import { CellType, StatusType, StatType } from '../context/reducers';
 
 type UpdateCellsType = (cellsArr: CellType[]) => {
 	cellsArr: CellType[];

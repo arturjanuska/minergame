@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { StatusType, CellType, Types } from '../context/reducers';
 import { AppContext } from '../context/Context';
@@ -9,53 +9,59 @@ import {
 	setStatus,
 	updateCells,
 } from '../helpers/stateManagement';
-
-// DONE
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 function PlayButton() {
 	const { state, dispatch } = useContext(AppContext);
+	const { t } = useTranslation();
 
-	const [buttonTheme, setButtonTheme] = useState({
-		text: 'START',
-		background: 'Orange',
-	});
+	const { bid, bombs, coefficients, status, cellsOpened, gameCells, isLogged } =
+		state;
 
-	const { bid, bombs, coefficients, status, cellsOpened, gameCells } = state;
+	const nav = useNavigate();
 
-	const handleButtonTheme = (): void => {
-		if (status === 'initial') {
-			setButtonTheme({
-				text: 'START',
+	const handleButtonTheme = (): { text: string; background: string } => {
+		if (!isLogged) {
+			return {
+				text: `${t('log in')}`,
 				background: 'Orange',
-			});
+			};
+		}
+		if (status === 'initial') {
+			return {
+				text: `${t('start')}`,
+				background: 'Orange',
+			};
 		}
 		if (status === 'active') {
 			if (cellsOpened === 0) {
-				setButtonTheme({
-					text: 'CHOOSE CELL',
+				return {
+					text: `${t('choose cell')}`,
 					background: 'grey',
-				});
+				};
 			} else {
-				setButtonTheme({
-					text: `TAKE: ${Number(
+				return {
+					text: `${t('take money')}: ${Number(
 						bid * coefficients[cellsOpened - 1].coefficient
-					).toFixed(2)}`,
+					).toFixed(2)} €`,
 					background: 'Green',
-				});
+				};
 			}
 		}
 		if (status === 'lose') {
-			setButtonTheme({
-				text: 'PLAY AGAIN',
+			return {
+				text: `${t('play again')}`,
 				background: 'Orange',
-			});
+			};
 		}
 		if (status === 'win') {
-			setButtonTheme({
-				text: 'PLAY AGAIN',
+			return {
+				text: `${t('play again')}`,
 				background: 'Orange',
-			});
+			};
 		}
+		return { text: '', background: '' };
 	};
 
 	useEffect(() => {
@@ -87,6 +93,10 @@ function PlayButton() {
 			type: Types.Generate,
 			payload: generatedGame,
 		});
+		dispatch({
+			type: Types.Cash,
+			payload: state.loggedUser.cash - state.bid,
+		});
 	};
 
 	const flipAllCells = () => {
@@ -110,23 +120,71 @@ function PlayButton() {
 	};
 
 	const takeMoney = (coeff: number, bid: number) => {
-		const sum = (bid * coeff).toFixed(2);
+		const prize = (bid * coeff).toFixed(2);
+		const sum = Number(prize) + state.loggedUser.cash;
+
+		dispatch({
+			type: Types.Cash,
+			payload: sum,
+		});
 		dispatch({
 			type: Types.Prize,
-			payload: Number(sum),
+			payload: Number(prize),
 		});
 	};
 
+	const gameEnd = (status: 'win' | 'lose', prize: number | '-'): void => {
+		if (status === 'win') {
+			const username = state.loggedUser.username;
+			const bid = state.bid;
+			const bombs = state.bombs;
+			const ratio = coefficients[state.beforeEndOpenedCells - 1].coefficient;
+			const winning = prize;
+			return dispatch({
+				type: Types.Stats,
+				payload: {
+					username,
+					bid,
+					bombs,
+					ratio,
+					winning,
+				},
+			});
+		}
+		if (status === 'lose') {
+			const username = state.loggedUser.username;
+			const bid = state.bid;
+			const bombs = state.bombs;
+			const ratio = coefficients[state.beforeEndOpenedCells].coefficient;
+			const winning = prize;
+			return dispatch({
+				type: Types.Stats,
+				payload: {
+					username,
+					bid,
+					bombs,
+					ratio,
+					winning,
+				},
+			});
+		}
+	};
 	return (
 		<button
 			onClick={() => {
+				if (!isLogged) {
+					nav('/auth');
+				}
 				if (status === 'initial') {
+					if (state.loggedUser.cash < state.bid) return;
 					handleStatus('active');
 					startGame(bombs);
 				}
 				if (status === 'active') {
 					if (cellsOpened === 0) return;
+					const prize = coefficients[cellsOpened - 1].coefficient * bid;
 					takeMoney(coefficients[cellsOpened - 1].coefficient, bid);
+					gameEnd('win', Number(prize.toFixed(2)));
 					handleStatus('win');
 					flipAllCells();
 				}
@@ -138,10 +196,10 @@ function PlayButton() {
 				}
 			}}
 			style={{
-				background: buttonTheme.background,
+				background: handleButtonTheme().background,
 			}}
 		>
-			{buttonTheme.text}
+			{handleButtonTheme().text}
 		</button>
 	);
 }

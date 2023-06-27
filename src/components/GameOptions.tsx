@@ -3,19 +3,21 @@ import { useContext } from 'react';
 import styles from '../styles/components/gameWindow.module.scss';
 import PlayButton from './PlayButton';
 import { AppContext } from '../context/Context';
-import { Types } from '../context/reducers';
+
 import BombSelectButton from './BombSelectButton';
 import BidButton from './BidButton';
+import { useTranslation } from 'react-i18next';
 
 function GameOptions() {
-	const { state, dispatch } = useContext(AppContext);
+	const { state } = useContext(AppContext);
+	const { t } = useTranslation();
 
 	const { bid, bombs, status } = state;
 
 	return (
 		<div className={styles.settings}>
 			<div className={styles.bombs}>
-				<p className={styles.bombs__title}>Number of bombs</p>
+				<p className={styles.bombs__title}>{t('number of bombs')}</p>
 				<div
 					className={styles.bombs__selector}
 					style={{
@@ -29,7 +31,7 @@ function GameOptions() {
 					<BombSelectButton bombs={24} />
 				</div>
 				<div className={styles.another}>
-					<p className={styles.title}>Another</p>
+					<p className={styles.title}>{t('another')}</p>
 					<p className={styles.bomb__number}>{bombs}</p>
 				</div>
 			</div>
@@ -42,7 +44,7 @@ function GameOptions() {
 					opacity: status !== 'initial' ? 0.8 : 1,
 				}}
 			>
-				<p className={styles.bid__title}>Bid</p>
+				<p className={styles.bid__title}>{t('bid')}</p>
 				<div className={styles.bid__selector}>
 					<p className={styles.bid__count}>
 						{bid.toFixed(2)} <span>€</span>

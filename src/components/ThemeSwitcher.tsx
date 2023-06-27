@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import styles from '../styles/components/switcher.module.scss';
 import { HiOutlineSun, HiOutlineMoon } from 'react-icons/hi';
 import { AppContext } from '../context/Context';

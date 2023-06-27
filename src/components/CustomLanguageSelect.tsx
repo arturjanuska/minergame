@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import styles from '../styles/components/navbar.module.scss';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import UK from '../assets/flags/UK.png';
@@ -6,25 +6,55 @@ import RU from '../assets/flags/RU.png';
 import LT from '../assets/flags/LT.png';
 import { AppContext } from '../context/Context';
 import { Types } from '../context/reducers';
+import { useTranslation } from 'react-i18next';
 
 function CustomLanguageSelect() {
 	const { state, dispatch } = useContext(AppContext);
+
+	const { i18n } = useTranslation();
+
+	const containerRef = useRef<HTMLDivElement>(null);
+
 	const languages = [
 		{
 			title: 'English',
 			stateTitle: 'english',
+			shortCut: 'en',
 		},
 		{
 			title: 'Русский',
 			stateTitle: 'russian',
+			shortCut: 'ru',
 		},
 		{
 			title: 'Lietuvių',
 			stateTitle: 'lithuanian',
+			shortCut: 'lt',
 		},
 	];
 
 	const [openDropdown, setOpen] = useState<boolean>(false);
+
+	useEffect(() => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(event.target as Node)
+			) {
+				setOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleOutsideClick);
+
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick);
+		};
+	}, []);
+
+	const changeLanguage = (lng: string) => {
+		i18n.changeLanguage(lng);
+	};
 
 	const filteredLanguages = languages.filter(
 		(lang) => lang.title !== state.language.title
@@ -57,12 +87,16 @@ function CustomLanguageSelect() {
 				/>
 			</div>
 			{openDropdown && (
-				<div className={`${styles.language__options} ${styles[state.theme]}`}>
+				<div
+					ref={containerRef}
+					className={`${styles.language__options} ${styles[state.theme]}`}
+				>
 					{filteredLanguages.map((lang) => (
 						<div
 							className={`${styles.language__box} ${styles[state.theme]}`}
 							key={lang.title}
 							onClick={() => {
+								changeLanguage(lang.shortCut);
 								setOpen(false);
 								dispatch({
 									type: Types.Language,
